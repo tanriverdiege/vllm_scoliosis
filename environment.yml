@@ -1,0 +1,52 @@
+# Mac (Apple Silicon) DEVELOPMENT environment -- CPU only.
+# For writing/testing code, and data prep
+# Model inference runs on the GPU box -- see setup_gpu.sh.
+#
+#   conda env create -f environment.yml
+#   conda activate scoliosis-vlm
+#
+# Two deliberate constraints, both explained in VERSIONS.md:
+#   - python 3.11  : widest wheel coverage across transformers 4.3x -> 5.x
+#   - av==15.1.0   : last release with a macosx_13_0_arm64 wheel (dev Mac is 13.0)
+#
+# Everything is installed via pip on purpose. Do NOT `conda install` compiled
+# libs (av, ffmpeg, openblas) into this env -- conda-forge drags in llvm-openmp
+# next to torch's bundled libomp, and two OpenMP runtimes abort the process.
+name: scoliosis-vlm
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      # --- core ---
+      - torch                       # CPU on this box; MPS needs macOS 14+
+      - torchvision
+      - transformers==4.57.6        # 4.x lane -- see VERSIONS.md to switch to 5.x
+      - accelerate
+      - safetensors
+      - sentencepiece
+      - protobuf
+      - huggingface_hub[hf_transfer]
+      - pyyaml                      # config.yaml -> VLMConfig
+
+      # --- VLM helpers ---
+      - qwen-vl-utils
+      - timm
+      - einops
+      - av==15.1.0                  # pinned for macOS 13; see header
+
+      # --- medical imaging / Cobb angle ---
+      - pillow
+      - numpy<2.3
+      - scipy
+      - opencv-python-headless
+      - pydicom
+      - matplotlib
+
+      # --- data + notebooks ---
+      - datasets
+      - pandas
+      - jupyterlab
+      - ipywidgets
+      - tqdm

@@ -1,0 +1,38 @@
+# Every argument the VLM constructor takes. Load with:
+#
+#   from config import VLMConfig
+#   from vlm import HuggingFaceVLM
+#
+#   vlm = HuggingFaceVLM(VLMConfig.from_yaml("config.yaml"))
+#
+# Unknown keys are an error, not a warning -- a typo'd key here would
+# otherwise be a setting that silently did not apply.
+
+# --- model ---
+# A HuggingFace model id.
+model_name: llava-hf/llama3-llava-next-8b-hf
+
+# Device to place the model on: cpu, cuda, mps, or an indexed form such as
+# cuda:1. Leave null to auto-detect (cuda -> mps -> cpu).
+device: null
+
+# --- generation ---
+# true samples from the distribution; false takes the argmax at every step,
+# which is deterministic and what evaluation runs should use.
+do_sample: false
+
+# Cap on generated tokens.
+max_new_tokens: 128
+
+# --- diagnostics ---
+# Return a structured output from generate() instead of a bare tensor. Forced
+# on automatically when either of the two below is true, since scores and
+# logits are only reachable through the structured form.
+return_dict_in_generate: false
+
+# Per-step distributions *after* logits processors -- what sampling saw.
+# Needed for VLMOutput.token_confidences() and .mean_confidence().
+output_scores: false
+
+# Per-step *raw* model outputs, before any processing.
+output_logits: false
